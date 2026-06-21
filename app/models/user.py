@@ -1,9 +1,4 @@
-from enum import Enum
-
-class UserRole(str, Enum):
-    ADMIN = "admin"
-    DOCTOR = "doctor"
-    RECEPTIONIST = "receptionist"
+from app.enums.user_role import UserRole
 
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column
