@@ -25,3 +25,13 @@ class DoctorUpdate(BaseModel):
     model_config = ConfigDict(
         from_attributes=True
     )
+
+class DoctorSummary(BaseModel):
+
+    id: int
+    name: str
+    specialization: str
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )

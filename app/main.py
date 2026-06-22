@@ -5,8 +5,11 @@ from contextlib import asynccontextmanager
 
 from app.api.doctor import router as doctor_router
 from app.api.auth import router as auth_router
+from app.api.patient import router as patient_router
 
 from app.exceptions.doctor_exception import DoctorNotFoundException
+from app.exceptions.patient_exception import PatientNotFoundException
+
 from app.exceptions.auth_exception import (
     InvalidCredentialsException,
     UserAlreadyExistsException,
@@ -35,6 +38,7 @@ app = FastAPI(
 
 app.include_router(doctor_router)
 app.include_router(auth_router)
+app.include_router(patient_router)
 
 app.add_middleware(
     LoggingMiddleware
@@ -104,5 +108,21 @@ async def unauthorized_exception_handler(
         status_code= 403,
         content={
             "detail": "You don't have permission to perform this action"
+        }
+    )
+
+
+@app.exception_handler(
+    PatientNotFoundException
+)
+async def patient_not_found_exception(
+    request: Request,
+    exc: PatientNotFoundException
+):
+    
+    return JSONResponse(
+        status_code=404,
+        content={
+            "detail": "Patient not found"
         }
     )

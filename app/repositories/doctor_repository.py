@@ -7,9 +7,9 @@ from app.schemas.doctor_schema import DoctorCreate, DoctorUpdate
 class DoctorRepository:
 
     def create(
-            self,
-            db: Session,
-            doctor_data: DoctorCreate
+        self,
+        db: Session,
+        doctor_data: DoctorCreate
     ) -> Doctor:
         
         doctor = Doctor(
