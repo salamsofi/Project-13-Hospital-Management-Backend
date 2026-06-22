@@ -24,3 +24,16 @@ class PatientResponse(BaseModel):
     model_config = ConfigDict(
         from_attributes= True
     )
+
+
+class PatientSummary(BaseModel):
+    id: int
+    name: str
+    age: int
+    city: str
+
+    doctor: DoctorSummary
+
+    model_config = ConfigDict(
+        from_attributes= True
+    )

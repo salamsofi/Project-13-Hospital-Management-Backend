@@ -6,9 +6,11 @@ from contextlib import asynccontextmanager
 from app.api.doctor import router as doctor_router
 from app.api.auth import router as auth_router
 from app.api.patient import router as patient_router
+from app.api.appointment import router as appointment_router
 
 from app.exceptions.doctor_exception import DoctorNotFoundException
 from app.exceptions.patient_exception import PatientNotFoundException
+from app.exceptions.appointment_exception import AppointmentNotFoundException
 
 from app.exceptions.auth_exception import (
     InvalidCredentialsException,
@@ -39,6 +41,7 @@ app = FastAPI(
 app.include_router(doctor_router)
 app.include_router(auth_router)
 app.include_router(patient_router)
+app.include_router(appointment_router)
 
 app.add_middleware(
     LoggingMiddleware
@@ -115,7 +118,7 @@ async def unauthorized_exception_handler(
 @app.exception_handler(
     PatientNotFoundException
 )
-async def patient_not_found_exception(
+async def patient_not_found_exception_handler(
     request: Request,
     exc: PatientNotFoundException
 ):
@@ -124,5 +127,22 @@ async def patient_not_found_exception(
         status_code=404,
         content={
             "detail": "Patient not found"
+        }
+    )
+
+
+@app.exception_handler(
+    AppointmentNotFoundException
+)
+async def appointment_not_found_exception_handler(
+    request: Request,
+    exc: AppointmentNotFoundException
+):
+    
+    return JSONResponse(
+        status_code = 404,
+        content= {
+            "detail": 
+            f"Appointment with id {exc.appointment_id} not found"
         }
     )
