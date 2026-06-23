@@ -21,3 +21,13 @@ class AppointmentResponse(BaseModel):
     model_config = ConfigDict(
         from_attributes=True
     )
+
+class AppointmentSummary(BaseModel):
+    id: int
+    appointment_date: datetime
+    reason: str
+    patient: PatientSummary
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )

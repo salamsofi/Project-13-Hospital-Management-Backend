@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from app.db.database import Base
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, ARRAY, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
@@ -18,7 +18,8 @@ class Prescription(Base):
         index=True
     )
 
-    medicines: Mapped[str] = mapped_column(
+    medicines: Mapped[list[str]] = mapped_column(
+        ARRAY(String),
         nullable=False
     )
 

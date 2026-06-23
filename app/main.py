@@ -7,10 +7,12 @@ from app.api.doctor import router as doctor_router
 from app.api.auth import router as auth_router
 from app.api.patient import router as patient_router
 from app.api.appointment import router as appointment_router
+from app.api.prescription import router as prescription_router
 
 from app.exceptions.doctor_exception import DoctorNotFoundException
 from app.exceptions.patient_exception import PatientNotFoundException
 from app.exceptions.appointment_exception import AppointmentNotFoundException
+from app.exceptions.prescription_exception import PrescriptionNotFoundException
 
 from app.exceptions.auth_exception import (
     InvalidCredentialsException,
@@ -42,6 +44,7 @@ app.include_router(doctor_router)
 app.include_router(auth_router)
 app.include_router(patient_router)
 app.include_router(appointment_router)
+app.include_router(prescription_router)
 
 app.add_middleware(
     LoggingMiddleware
@@ -144,5 +147,22 @@ async def appointment_not_found_exception_handler(
         content= {
             "detail": 
             f"Appointment with id {exc.appointment_id} not found"
+        }
+    )
+
+
+@app.exception_handler(
+    PrescriptionNotFoundException
+)
+async def prescription_not_found_exception_handler(
+    request: Request,
+    exc: PrescriptionNotFoundException
+):
+    
+    return JSONResponse(
+        status_code= 404,
+        content= {
+            "detail": 
+            f"Prescription with id {exc.prescription_id} not found"
         }
     )
