@@ -19,7 +19,7 @@ class PatientResponse(BaseModel):
     name: str
     age: int
     city: str
-    doctor_id: DoctorSummary
+    doctor: DoctorSummary
     
     model_config = ConfigDict(
         from_attributes= True

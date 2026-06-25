@@ -1,9 +1,13 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
+from app.models.user import User
+from app.enums.user_role import UserRole
+
 from app.services.prescription_service import PrescriptionService
 
+from app.dependencies.role_dependency import require_roles
 from app.dependencies.prescription_dependency import (
     get_prescription_service
 )
@@ -23,7 +27,8 @@ router = APIRouter(
 # Create Prescription
 @router.post(
     "/",
-    response_model= PrescriptionResponse
+    response_model= PrescriptionResponse,
+    status_code= status.HTTP_201_CREATED
 )
 def create_prescription(
     prescription_data: PrescriptionCreate,
@@ -31,6 +36,12 @@ def create_prescription(
     
     prescription_service: PrescriptionService = Depends(
         get_prescription_service
+    ),
+    current_user: User = Depends(
+        require_roles(
+            UserRole.ADMIN,
+            UserRole.DOCTOR
+        )
     )
 ):
     
@@ -86,7 +97,7 @@ def get_prescription_by_id(
 # Update Prescription
 @router.put(
     "/{prescription_id}",
-    response_model= PrescriptionService
+    response_model= PrescriptionResponse
 )
 def update_prescription(
     prescription_id: int,
@@ -94,6 +105,12 @@ def update_prescription(
     db: Session = Depends(get_db),
     prescription_service: PrescriptionService = Depends(
         get_prescription_service
+    ),
+    current_user: User = Depends(
+        require_roles(
+            UserRole.ADMIN,
+            UserRole.DOCTOR
+        )
     )
 ):
 
@@ -106,13 +123,16 @@ def update_prescription(
 # Delete Prescription
 @router.delete(
     "/{prescription_id}",
-    response_model= PrescriptionService
+    status_code= status.HTTP_204_NO_CONTENT
 )
 def delete_prescription(
     prescription_id: int,
     db: Session = Depends(get_db),
     prescription_service: PrescriptionService = Depends(
         get_prescription_service
+    ),
+    current_user: User = Depends(
+        require_roles(UserRole.ADMIN)
     )
 ):
     
@@ -120,7 +140,3 @@ def delete_prescription(
         prescription_id,
         db
     )
-
-    return {
-        "message": "Prescription deleted successfully"
-    }

@@ -77,7 +77,7 @@ class AppointmentRepository:
             stmt.offset(skip).limit(limit)
         )
 
-        return db.scalars(Appointment).all()
+        return db.scalars(stmt).all()
     
 
     def get_by_id(
@@ -108,9 +108,7 @@ class AppointmentRepository:
         db: Session
     ) -> Appointment:
         
-        update_data = Appointment(
-            appointment_data.model_dump()
-        )
+        update_data = appointment_data.model_dump()
 
         for key, value in update_data.items():
             setattr(
@@ -119,7 +117,7 @@ class AppointmentRepository:
                 value
             )
 
-        db.commit(appointment)
+        db.commit()
         db.refresh(appointment)
 
         return appointment

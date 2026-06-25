@@ -118,6 +118,9 @@ class PrescriptionRepository:
         
         update_data = prescription_data.model_dump()
 
+        print(update_data)
+        print(type(update_data["medicines"]))
+
         for key, value in update_data.items():
             setattr(
                 prescription,
@@ -127,6 +130,10 @@ class PrescriptionRepository:
 
         db.commit()
         db.refresh(prescription)
+
+        print("AFTER REFRESH")
+        print(prescription.medicines)
+        print(type(prescription.medicines))
 
         return prescription
     

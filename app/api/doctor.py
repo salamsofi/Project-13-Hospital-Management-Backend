@@ -2,18 +2,18 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
+from app.enums.user_role import UserRole
 
 from app.models.doctor import Doctor
 from app.models.user import User
 
-from app.schemas.doctor_schema import DoctorCreate, DoctorResponse
-from app.repositories.doctor_repository import DoctorRepository
 from app.services.doctor_service import DoctorService
+from app.repositories.doctor_repository import DoctorRepository
+from app.schemas.doctor_schema import DoctorCreate, DoctorResponse
 
+from app.dependencies.role_dependency import require_roles
 from app.dependencies.doctor_dependency import get_doctor_service
 from app.dependencies.auth_dependency import get_current_user
-
-from app.dependencies.role_dependency import require_admin
 
 # Step 2: Create Router
 router = APIRouter(
@@ -31,7 +31,9 @@ def create_doctor(
     doctor_data: DoctorCreate,
     db: Session = Depends(get_db),
     doctor_service: DoctorService = Depends(get_doctor_service),
-    current_user: User = Depends(require_admin)
+    current_user: User = Depends(
+        require_roles(UserRole.ADMIN)
+    )
 ):
     
     return doctor_service.create_doctor(
@@ -89,9 +91,11 @@ def update(
     doctor_id: int,
     doctor_data: DoctorCreate,
     db: Session = Depends(get_db),
-
     doctor_service: DoctorService = Depends(
         get_doctor_service
+    ),
+    current_user: User = Depends(
+        require_roles(UserRole.ADMIN)
     )
 ):
 
@@ -108,11 +112,14 @@ def update(
     status_code= status.HTTP_204_NO_CONTENT
 )
 def delete_doctor(
-    doctor_id = int,
+    doctor_id: int,
     db: Session = Depends(get_db),
     
     doctor_service: DoctorService = Depends(
         get_doctor_service
+    ),
+    ccurrent_user: User = Depends(
+        require_roles(UserRole.ADMIN)
     )
 ):
     

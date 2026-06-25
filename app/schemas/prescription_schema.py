@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict
 from app.schemas.appointment_schema import AppointmentSummary
 
 class PrescriptionCreate(BaseModel):
-    medicines = list[str]
+    medicines: list[str]
     dosage: str
     appointment_id: int
 
@@ -17,7 +17,7 @@ class PrescriptionResponse(BaseModel):
     medicines: list[str]
     dosage: str
     # appointment_id: int
-    appointment_id: AppointmentSummary
+    appointment : AppointmentSummary
     
     model_config = ConfigDict(
         from_attributes=True
